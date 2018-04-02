@@ -2,7 +2,7 @@ title: joelcponte
 description: > # this means to ignore newlines until "baseurl:"
   This blog is about topics related to the data science universe. More specifically: machine learning, data visualization, statistics, python, R and so on.
 permalink: ':title/'
-baseurl: "joelcponte.com" # the subpath of your site, e.g. /blog
+baseurl: "/" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 site-twitter: #if your site has a twitter account, enter it here
 
