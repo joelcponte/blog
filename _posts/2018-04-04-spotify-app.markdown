@@ -31,7 +31,7 @@ First, I downloaded playlists with the keywords "running" and "relax" through Sp
 
 I few things that in mind:
 
-- Add lyris information.
+- Add lyrics information.
 - Make it possible to export the playlists to Spotify.
 - Playlist: retrieve songs similar to a list of songs.
-- And some other which may be secret by now.
+- And some others that should be secret by now.
