@@ -30,7 +30,7 @@ It sounds simple but Facebook has a lot of little details that we must take into
 
 We begin by starting RSelenium as usual and loging in Facebook. If you are not familiar with RSelenium I recommend [taking a look here](https://ropensci.org/tutorials/rselenium_tutorial/) and [here](http://rpubs.com/johndharrison/RSelenium-Docker).
 
-```r
+{% highlight r%}
 remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, browserName = "firefox")
 remDr$open()
 
@@ -52,7 +52,7 @@ txtfield$sendKeysToElement(list(password))
 ## click to log in
 wxbutton <- remDr$findElement(using = 'css selector', "#u_0_2")
 wxbutton$clickElement()
-```
+{% endhighlight %}
 
 To find the css selectors, I had the help of the Google Chrome extension [SelectorGadget](http://selectorgadget.com/). It didn't work always so sometimes I had to inspect the page manually to find the CSS selectors.
 
