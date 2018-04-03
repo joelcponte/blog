@@ -1,12 +1,15 @@
 ---
 layout: post
 title: Scraping and Visualizing my Network of Friends With RSelenium and D3.js
-date: 2017-09-12 13:32:20 +0300
-description: You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. # Add post description (optional)
+date: 2018-04-03 13:32:20 +0300
+description:  # Add post description (optional)
 img: network_of_friends.jpg # Add image post (optional)
-tags: [Holidays, Hawaii]
+tags: [R, scraping, RSelenium, data-visualization, D3.js]
 ---
-Years ago, when Facebook's API was more permissive, I remember of using an app that provided a visualization of my network of friends. I intended to take snapshots of the network over time and see its growth as I would meet more people, but (un?)fortunately Facebook's API stopped allowing users to retrieve the list of their mutual friends with their friends, which is crucial information to create that visualization. For this reason that app inevitably died.
+
+***tl;dr: Visualization in d3.js that shows conexions among Facebook friends and indentifies groups of friends***
+
+Years ago, when Facebook's API was more permissive, I remember of using an app that provided a visualization of my network of friends. I intended to take snapshots of the network over time to see its growth as I met more people, but (un?)fortunately Facebook's API stopped allowing users to retrieve the list of their mutual friends with their friends, which was crucial information to create that visualization. For this reason that app inevitably died.
 
 In this post I will show how I recreated that visualization. I used R and the package RSelenium to scrape the data from Facebook and D3.JS to create a visualization.
 
@@ -14,17 +17,18 @@ In this post I will show how I recreated that visualization. I used R and the pa
 
 The strategy for this project was the following:
 
-1. Go to my own "Friends" page to scrape the necessary information about my friends (quantity, names, ids and usernames).
+1. Go to my own "Friends" page to scrape the necessary information about them. (quantity, names, ids and usernames).
 2. Loop through this list of friends and get their list of mutual friends by scraping their "Friends" page.
 
 It sounds simple but Facebook has a lot of little details that we must take into consideration:
 - The "Friends" page of your friends will change depending on their privacy settings.
-- Everyone on Facebook have ids, but most users have also usernames. The links to their pages depends on whether they usernames or not.
-- Some people who deleted their Facebook will still appear in your friends list, but their profile will be unnacessible.
+- Everyone on Facebook have ids, but most users have also usernames. The links to their pages depend on whether they have usernames or not.
+- When you visit a "Friends" page, not all friends are immediately shown. More and more friends are loaded as you scroll down.
+- Some people who deleted their Facebook will still appear in your friends list, but their profile and "Friends" page will be unnacessible.
 
 ## R scrapping
 
-We begin by starting RSelenium as usual and loging in Facebook. If you are not familiar with RSelenium I recommend [taking a look here](http://rpubs.com/johndharrison/RSelenium-Docker).
+We begin by starting RSelenium as usual and loging in Facebook. If you are not familiar with RSelenium I recommend [taking a look here](https://ropensci.org/tutorials/rselenium_tutorial/) and [here](http://rpubs.com/johndharrison/RSelenium-Docker).
 
 ```r
 remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, browserName = "firefox")
@@ -95,12 +99,32 @@ friends = friends[1:n_friends]
 ```
 
 
-Now that the page shows all of our friends, we can collect information about them. 
+Now that the page shows all of our friends, we can collect information about them.
 
-We don't know which friends have usernames or not. For those who have usernames, their profile page will look like "**facebook.&#8203;com/*USERNAME_HERE*?fref=pb&hc_location=friends_tab**" and for those who don't they will be "**facebook.&#8203;com/profile.php?id=*ID_HERE*&fref=pb&hc_location=friends_tab**". 
+We don't know which friends have usernames or not. For friends who have usernames, we retrieve something close to:
 
-We try to extract both usernames and ids using regular expressions and we say that the user has an ID and not an username if the string retrieved is too big. The trick here is the following: we use the code `sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)` to get the username. If the user has a username, it will be properly retrieved. If the user doesn't, it will retrieve "profile.php?id=ID_HERE", which
->  **CONTINUAR DEPOIS**.
+```r
+friends[532] %>% as.character()
+[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/ \
+  user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
+  data-gt='{\"engagement\":{\"eng_type\":\"1\",\"eng_src\":\"2\",\"eng_tid\":\"1437964297\" \
+  ,\"eng_data\":[]},\"coeff2_registry_key\":\"0406\",\"coeff2_info\":\" \
+  AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\" \
+  ,\"coeff2_action\":\"1\",\" coeff2_pv_signature\":\"2045669656\"}' href=\" \
+  https://www.facebook.com/USERNAME_HERE?fref=pb&amp; hc_location=friends_tab\">User Name</a>"
+```
+
+For friends who don't have usernames, we stored in the variable `friends` something like:
+
+```r
+[1] <a role="button" ajaxify="/ajax/friends/inactive/dialog?id=ID_HERE" \
+  rel="dialog" href="#">User Name</a>
+```
+
+We now try to extract both usernames and ids using regular expressions and we say that the user has an id and not an username if the string retrieved is too big. The trick here is the following: we use the code `sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)` to get the username. If the user has an username, it will be properly retrieved. If the user doesn't, it will fail to match the regex so it will retrieve the whole id string, which is big. After some analysis I found the value of 50 to be a good threshold. That is, it the retrieved friend username has more than 50 characters, it means that it is not an username, and therefore the user doesn't have one.
+
+
+
 
 
 ```r
@@ -112,7 +136,8 @@ friends_usernames = sapply(friends,
 friends_usernames[nchar(friends_usernames)>50] = NA
 ```
 
-Now we define a function to help us retrieve mutual friends page:
+Now we define a function to help us retrieve mutual friends page. It will depend on wether the user does or doesn't have an username.
+
 
 ```r
 fb_mutual_friends_page <- function(string, type = "username") {
@@ -160,7 +185,9 @@ for (i in 1:n_friends) {
     remDr$navigate(friends_df$link[i])
     current_page = read_html(remDr$getPageSource()[[1]])
     n_friends_now = html_nodes(current_page, ".fsl.fwb.fcb") %>% html_text %>% length()
-    mutual_friends = html_nodes(current_page, "[name='Mutual Friends'] ._3d0") %>% html_text %>% as.numeric
+    mutual_friends = html_nodes(current_page, "[name='Mutual Friends'] ._3d0") %>%
+        html_text %>% 
+        as.numeric
     mutual_friends = mutual_friends[1]
     
     #check if friend has deleted page
@@ -207,7 +234,7 @@ At this point we should have a list that looks like:
 ```
 
 
-It would be nice to have some clusterization of friends to encode as color for the visualization and to do that we will use the package `igraph` and a label propagation algorithm. *Disclaimer: I didn't study anything about the available methods to do this so please note that I am just applying a function that I found somewhere and there a probably much better ways to do this.*
+It would be nice to have some clusterization of friends to encode as color for the visualization and to do that we will use the package `igraph` and a label propagation algorithm. *Disclaimer: I didn't study anything about the available methods to do this so please note that I am just applying a function that I found somewhere and there are probably better ways to do this.*
 
 We need to transform a little the data to learn the clusters:
 
@@ -237,7 +264,7 @@ wc <- label.propagation.community(g)
 > head(ga.data, 2)
   from            to
 1 xxxxxx          zzzzzzz
-2 xxxxxx          yyyyyy
+2 xxxxxx          yyyyyyy
 ```
 <p></p>
 ```r
@@ -263,37 +290,46 @@ for (i in 1:length(wc)) {
 names(nodes) = c("name", "group")
 
 
-
 n_links = do.call("rbind", mutual_friends_ids_all %>% lapply(length))
 n_links = cbind(friends_df[,"name", drop = F], n_links)
 nodes = merge(nodes, n_links, by = "name", sort = F)
 names(nodes)[1] = "id"
+#in case there's a mistake and someone appears in links but not nodes...
+links = links[links$source %in% nodes$id,]
+links = links[links$target %in% nodes$id,]
 ```
-.
+<p></p>
 ```r
 > head(links,2)
   source         target
-1 xxxxx			 zzzzzz
-2 xxxxx			 yyyyyy
+1 xxxxx      zzzzzz
+2 xxxxx      yyyyyy
+```
+<p></p>
+```r
+> head(nodes,2)
+  id group n_links
+1 xxxxx     1      22
+2 yyyyy     1      31
 ```
 
-> **ADICIONAR NODES**
 
 And save to json
 ```r
 json_nodes = rjson::toJSON(unname(split(nodes, 1:nrow(nodes))))
 json_links = rjson::toJSON(unname(split(links, 1:nrow(links))))
 write_file(paste0('{\n"nodes": ', json_nodes, ', \n', '"links": ', json_links, "\n}"),
-           "temp.json")
+           "data.json")
 ```
 
 
 ## D3.js visualization
 
-For this I [got a ready-to-go visualization](https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8) and made some changes. More specifically, I made it possible to zoom in and out, encoded the size of the circles with the number of mutual friends and changed the force. See the code and result below.
+For this I [got a ready-to-go visualization](https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8) and made some changes. More specifically, I made it possible to zoom in and out, encoded the size of the circles with the number of mutual friends and changed the force. See the code below and the result [**here**]({{site.baseurl}}/assets/d3js/vis.html). For the whole code checkout [my github repository](https://github.com/joelcponte/rselenium-facebook-mutualfriends-scraper).
 
+I found my network to be very interesting. Some background about myself: I'm from a city in Brazil called Fortaleza. Although more than 2.5 million people live there, it is common to say that everyone in their 20's knows each other. That seems to be the case (at least in my network), as shown in the big blue cluster in the middle. It contains close friends, friends from middle and highschool and completely unrelated people that I met through many different ways. Close to that there is a gray cluster that contains mostly family members. Other two small clusters are in red and orange, which are respectively ex-roomates/landlord and coworkers. Then, there are four clusters far from the middle: people from home university in Brazil, people from the exchange that I did in Canada, people from my master's in the US and the very small of people from my current master's in France.
 
-<iframe src="{{site.baseurl}}/assets/d3js/vis.html" width="100%" height="500" marginwidth="0" marginheight="0" scrolling="no" frameBorder="0"></iframe>
+<!-- <iframe src="{{site.baseurl}}/assets/d3js/vis.html" width="100%" height="500" marginwidth="0" marginheight="0" scrolling="no" frameBorder="0"></iframe> -->
 
 ```javascript
 <!DOCTYPE html>
@@ -340,16 +376,16 @@ var simulation = d3.forceSimulation()
 
   zoom_handler(svg);     
 
-d3.json("miserables.json", function(error, graph) {
+d3.json("temp.json", function(error, graph) {
   if (error) throw error;
-
-
+  console.log("asdaSD")
+  debugger;
   var link = g.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
-      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+      .attr("stroke-width", 0.5);
 
   var node = g.append("g")
       .attr("class", "nodes")

@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Music exploriation and visualization with Spotify and Shiny.
-date: 2017-09-12 13:32:20 +0300
-description: You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. # Add post description (optional)
+title: Music exploration and visualization with Spotify and Shiny.
+date: 2018-04-03 13:32:20 +0300
+description: # Add post description (optional)
 img: spotify-sim.gif # Add image post (optional)
-tags: [Holidays, Hawaii]
+tags: [spotify, data-visualization, shiny, machine-learning, R]
 ---
 
 A while ago [this post](http://www.rcharlie.com/post/fitter-happier/) became viral among two groups that I am part of: R users and Radiohead fans. I took that, my willingess to improve my Shiny skills and my personal interest in understanding and comparing music to create a Shiny app that process music data using Spotify's API.
@@ -24,4 +24,14 @@ In the second tab, you can find energetic and calm playlists generated with the 
 
 ## How was the playlist recommender created?
 
-First, I downloaded playlists with the keywords "running" and "relax" through Spotify's api and labelled the songs accordingly. Spotify provides a set of features for all of their songs (again, such as energy and instrumentalness), so I used these to create a training set where the Spotify features were the inputs and the labels "running" and "relax" the outputs. A logistic regression was trained to predict to which playlist new songs are most likely to belong.
+First, I downloaded playlists with the keywords "running" and "relax" through Spotify's api and labelled the songs accordingly. Spotify provides a set of features for all of their songs which I used to create a training set where the Spotify features were the inputs and "running" and "relax" the outputs. A logistic regression model was trained to predict to which playlist new songs are most likely to belong.
+
+
+## Next steps
+
+I few things that in mind:
+
+- Add lyris information.
+- Make it possible to export the playlists to Spotify.
+- Playlist: retrieve songs similar to a list of songs.
+- And some other which may be secret by now.
