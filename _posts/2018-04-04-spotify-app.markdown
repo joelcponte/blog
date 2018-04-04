@@ -13,18 +13,18 @@ The code can be found on [my github](https://github.com/joelcponte/shiny-app-spo
 
 ## Great, but what can I do with it?
 
-Select one or multiple artists. In the first tab, find their most (and least) similar songs. Heard a song you liked and wanna know other songs from that artists that are similar to it? Tipe its name in the search of the "Most similar songs" box and rank them accordngly.
+Select one or multiple artists. In the first tab, find their most (and least) similar songs. Heard a song you liked and wanna know other songs from that artist that are similar to it? Tipe its name in the search of the "Most similar songs" box and rank them accordingly.
 
-You can also see a scatterplot of pca-reduction to 2 or 3 dimensions of the songs features (such as energy and instrumentalness) to see where each song lies on that reduced space. If you pick one artist, the points will be colored by albums, and if you pick multiple artists, they will be colored by artists. You can see for example how different the albums of an artist are among themselves or how multiple artists are more or less similar. In the gif that opens this post we compared Radiohead and Oasis and the scatterplot indicates that Radiohead songs tend to have more "Acousticness", "Instrumentalness" and "Danceability" whereas Oasis songs tend to have more "Liveness", "Loudness" and "Energy".
+You can also see a scatterplot of pca reduction to 2 or 3 dimensions of the songs features (such as energy and instrumentalness) to see where each song lies on that reduced space. If you pick one artist, the points will be colored by albums, and if you pick multiple artists, they will be colored by artists. You can see for example how different the albums of an artist are among themselves or how multiple artists are more or less similar. In the gif that opens this post I compared Radiohead and Oasis and the scatterplot indicates that Radiohead songs tend to have more "Acousticness", "Instrumentalness" and "Danceability" whereas Oasis songs tend to have more "Liveness", "Loudness" and "Energy".
 
 
 
-In the second tab, you can find energetic and calm playlists generated with the artists and albums you selected.
+In the second tab, you can find energetic and calm playlists generated with the artists and/or albums you selected.
 
 
 ## How was the playlist recommender created?
 
-First, I downloaded playlists with the keywords "running" and "relax" through Spotify's api and labelled the songs accordingly. Spotify provides a set of features for all of their songs which I used to create a training set where the Spotify features were the inputs and "running" and "relax" the outputs. A logistic regression model was trained to predict to which playlist new songs are most likely to belong.
+First, I downloaded playlists with the keywords "running" and "relax" through Spotify's api and labelled the songs accordingly. Spotify provides a set of features for all of their songs which I used to create a training set where the Spotify features were the inputs and "running" and "relaxing" the outputs. A logistic regression model was trained to predict to which playlist new songs are most likely to belong.
 
 
 ## Next steps
@@ -33,5 +33,6 @@ I few things that in mind:
 
 - Add lyrics information.
 - Make it possible to export the playlists to Spotify.
+- Play parts of the songs by clicking on them.
 - Playlist: retrieve songs similar to a list of songs.
-- And some others that should be secret by now.
+- And some others that should be a secret by now.
