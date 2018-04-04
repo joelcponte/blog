@@ -22,7 +22,7 @@ The strategy for this project was the following:
 
 It sounds simple but Facebook has a lot of little details that we must take into consideration:
 - The "Friends" page of your friends will change depending on their privacy settings.
-- Everyone on Facebook has ids, but most users have also usernames. The links to their pages depend on whether they have usernames or not.
+- Everyone on Facebook has ids, but most users also have usernames. The links to their pages depend on whether they have usernames or not.
 - When you visit a "Friends" page, not all friends are immediately shown. More and more friends are loaded as you scroll down.
 - Some people who deleted their Facebook will still appear in your friends list, but their profile and "Friends" page will be unnacessible.
 
@@ -76,7 +76,7 @@ n_friends = as.numeric(n_friends[1])
 
 ![alt text]({{site.baseurl}}/assets/img/my_friends.jpg)
 
-Only a few of your friends are shown when you load this page. The rest of your friends only show up if you scroll down, so we have to tell selenium to scroll down the page until we can see as many friends as the number of friends that we know that we have:
+Only a few of your friends are shown when you load this page. The rest of them only show up if you scroll down, so we have to tell selenium to do it until we can see as many friends as the amount that we have:
 
 
 {% highlight r%}
@@ -101,7 +101,7 @@ friends = friends[1:n_friends]
 
 Now that the page shows all of our friends, we can collect information about them.
 
-We don't know which friends have usernames or not. For friends who have usernames, we retrieve something close to:
+We don't know which friends have usernames or not. For friends who have usernames, we retrieved something close to:
 
 {% highlight r%}
 friends[532] %>% as.character()
@@ -114,17 +114,15 @@ friends[532] %>% as.character()
   https://www.facebook.com/USERNAME_HERE?fref=pb&amp; hc_location=friends_tab\">User Name</a>"
 {% endhighlight %}
 
-For friends who don't have usernames, we stored in the variable `friends` something like:
+For friends who don't have usernames, we have something like:
 
 {% highlight r%}
+friends[533] %>% as.character()
 [1] <a role="button" ajaxify="/ajax/friends/inactive/dialog?id=ID_HERE" \
   rel="dialog" href="#">User Name</a>
 {% endhighlight %}
 
-We now try to extract both usernames and ids using regular expressions and we say that the user has an id and not an username if the string retrieved is too big. The trick here is the following: we use the code `sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)` to get the username. If the user has an username, it will be properly retrieved. If the user doesn't, it will fail to match the regex so it will retrieve the whole id string, which is big. After some analysis I found the value of 50 to be a good threshold. That is, it the retrieved friend username has more than 50 characters, it means that it is not an username, and therefore the user doesn't have one.
-
-
-
+We now try to extract both usernames and ids using regular expressions and we say that the user has an id and doesn't have an username if the username string retrieved is big. We can always retrieve the ids correctly using `return(sub(".*id=([0-9]*).*", "\\1", x)`. For the usernames, we try to get them by using `sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)`, which will capture the correct username if the user has one, and will retrive the whole input string if the user doesn't. Since these input strings are much bigger than usernames, we can just say that if the username retrieved has more than 50 characters it is not an username and therefore the user doesn't have one.
 
 
 {% highlight r%}
