@@ -105,8 +105,7 @@ We don't know which friends have usernames or not. For friends who have username
 
 {% highlight r%}
 friends[532] %>% as.character()
-[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/ \
-  user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
+[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
   data-gt='{\"engagement\":{\"eng_type\":\"1\",\"eng_src\":\"2\",\"eng_tid\":\"1437964297\" \
   ,\"eng_data\":[]},\"coeff2_registry_key\":\"0406\",\"coeff2_info\":\" \
   AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\" \
