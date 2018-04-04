@@ -15,7 +15,7 @@ The code can be found on [my github](https://github.com/joelcponte/shiny-app-spo
 
 Select one or multiple artists. In the first tab, find their most (and least) similar songs. Heard a song you liked and wanna know other songs from that artist that are similar to it? Tipe its name in the search of the "Most similar songs" box and rank them accordingly.
 
-You can also see a scatterplot of pca reduction to 2 or 3 dimensions of the songs features (such as energy and instrumentalness) to see where each song lies on that reduced space. If you pick one artist, the points will be colored by albums, and if you pick multiple artists, they will be colored by artists. You can see for example how different the albums of an artist are among themselves or how multiple artists are more or less similar. In the gif that opens this post I compared Radiohead and Oasis and the scatterplot indicates that Radiohead songs tend to have more "Acousticness", "Instrumentalness" and "Danceability" whereas Oasis songs tend to have more "Liveness", "Loudness" and "Energy".
+You can also see a scatterplot of a PCA reduction to 2 or 3 dimensions of the songs features (such as energy and instrumentalness) to see where each song lies on that reduced space. If you pick one artist, the points will be colored by albums, and if you pick multiple artists, they will be colored by artists. You can see for example how different the albums of an artist are among themselves or how multiple artists are more or less similar. In the gif that opens this post I compared Radiohead and Oasis and the scatterplot indicates that Radiohead songs tend to have more "Acousticness", "Instrumentalness" and "Danceability" whereas Oasis songs tend to have more "Liveness", "Loudness" and "Energy".
 
 
 
