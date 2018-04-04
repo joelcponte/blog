@@ -105,7 +105,8 @@ We don't know which friends have usernames or not. For friends who have username
 
 {% highlight r%}
 friends[532] %>% as.character()
-[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
+[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\" \
+/ajax/hovercard/user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
   data-gt='{\"engagement\":{\"eng_type\":\"1\",\"eng_src\":\"2\",\"eng_tid\":\"1437964297\" \
   ,\"eng_data\":[]},\"coeff2_registry_key\":\"0406\",\"coeff2_info\":\" \
   AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\" \
@@ -325,7 +326,7 @@ write_file(paste0('{\n"nodes": ', json_nodes, ', \n', '"links": ', json_links, "
 
 For this I [got a ready-to-go visualization](https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8) and made some changes. More specifically, I made it possible to zoom in and out, encoded the size of the circles with the number of mutual friends and changed the force. See the code below and the result [**here**]({{site.baseurl}}/assets/d3js/vis.html). For the whole code checkout [my github repository](https://github.com/joelcponte/rselenium-facebook-mutualfriends-scraper).
 
-I found my network to be very interesting. Some background about myself: I'm from a city in Brazil called Fortaleza. Although more than 2.5 million people live there, it is common to say that everyone in their 20's knows each other. That seems to be the case (at least in my network), as shown in the big blue cluster in the middle. It contains close friends, friends from middle and highschool and completely unrelated people that I met through many different ways. Close to that there is a gray cluster that contains mostly family members. Other two small clusters are in red and orange, which are respectively ex-roomates/landlord and coworkers. Then, there are four clusters far from the middle: people from home university in Brazil, people from the exchange that I did in Canada, people from my master's in the US and the very small of people from my current master's in France.
+I found my network to be very interesting. Some background about myself: I'm from a city in Brazil called Fortaleza. Although more than 2.5 million people live there, it is common to say that everyone in their 20's knows each other. That seems to be the case (at least in my network), as shown in the big blue cluster in the middle. It contains close friends, friends from middle and highschool and completely unrelated people that I met through many different ways. Close to that there is a light blue cluster, that contains mostly family members, and a light pink one, which contains people I used to play boardgames with. Other two small clusters are in red and gray, which are respectively ex-roomates/landlord and coworkers. Then, there are four clusters far from the middle: people from home university in Brazil (in light green), people from the exchange that I did in Canada (in orange), people from my master's in the US (in dark green) and the very small of people from my current master's in France (in light orange).
 
 <!-- <iframe src="{{site.baseurl}}/assets/d3js/vis.html" width="100%" height="500" marginwidth="0" marginheight="0" scrolling="no" frameBorder="0"></iframe> -->
 
