@@ -22,7 +22,7 @@ The strategy for this project was the following:
 
 It sounds simple but Facebook has a lot of little details that we must take into consideration:
 - The "Friends" page of your friends will change depending on their privacy settings.
-- Everyone on Facebook have ids, but most users have also usernames. The links to their pages depend on whether they have usernames or not.
+- Everyone on Facebook has ids, but most users have also usernames. The links to their pages depend on whether they have usernames or not.
 - When you visit a "Friends" page, not all friends are immediately shown. More and more friends are loaded as you scroll down.
 - Some people who deleted their Facebook will still appear in your friends list, but their profile and "Friends" page will be unnacessible.
 
