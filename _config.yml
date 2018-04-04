@@ -9,7 +9,7 @@ site-twitter: #if your site has a twitter account, enter it here
 # Author Settings
 author: Joel Ponte # add your name
 author-img: joel-ponte.jpg # add your photo
-about-author: I write about data science. # add description
+about-author: #I write about data science. # add description
 social-twitter: # add your Twitter handle
 social-facebook: # add your Facebook handle
 social-github: joelcponte # add your Github handle
