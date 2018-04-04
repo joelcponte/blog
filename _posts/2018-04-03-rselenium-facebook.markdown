@@ -58,7 +58,7 @@ To find the css selectors, I had the help of the Google Chrome extension [Select
 
 Once logged in, we must go to our own Friends page to retrieve the necessary information about our Friends.
 
-```r
+{% highlight r%}
 ## go to your profile page
 wxbutton <- remDr$findElement(using = 'css selector', "#userNav .noCount")
 wxbutton$clickElement()
@@ -72,14 +72,14 @@ wxbutton$clickElement()
 page = read_html(remDr$getPageSource()[[1]])
 n_friends = html_nodes(page, "._3d0") %>% html_text
 n_friends = as.numeric(n_friends[1])
-``` 
+{% endhighlight %}
 
 ![alt text]({{site.baseurl}}/assets/img/my_friends.jpg)
 
 Only a few of your friends are shown when you load this page. The rest of your friends only show up if you scroll down, so we have to tell selenium to scroll down the page until we can see as many friends as the number of friends that we know that we have:
 
 
-```r
+{% highlight r%}
 friends = 1
 # scroll down page down to the bottom
 while(length(friends) < n_friends) {
@@ -96,14 +96,14 @@ while(length(friends) < n_friends) {
 }
 # select only friends (the css selector gets other elements once all friends are found)
 friends = friends[1:n_friends]
-```
+{% endhighlight %}
 
 
 Now that the page shows all of our friends, we can collect information about them.
 
 We don't know which friends have usernames or not. For friends who have usernames, we retrieve something close to:
 
-```r
+{% highlight r%}
 friends[532] %>% as.character()
 [1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/ \
   user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
@@ -112,14 +112,14 @@ friends[532] %>% as.character()
   AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\" \
   ,\"coeff2_action\":\"1\",\" coeff2_pv_signature\":\"2045669656\"}' href=\" \
   https://www.facebook.com/USERNAME_HERE?fref=pb&amp; hc_location=friends_tab\">User Name</a>"
-```
+{% endhighlight %}
 
 For friends who don't have usernames, we stored in the variable `friends` something like:
 
-```r
+{% highlight r%}
 [1] <a role="button" ajaxify="/ajax/friends/inactive/dialog?id=ID_HERE" \
   rel="dialog" href="#">User Name</a>
-```
+{% endhighlight %}
 
 We now try to extract both usernames and ids using regular expressions and we say that the user has an id and not an username if the string retrieved is too big. The trick here is the following: we use the code `sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)` to get the username. If the user has an username, it will be properly retrieved. If the user doesn't, it will fail to match the regex so it will retrieve the whole id string, which is big. After some analysis I found the value of 50 to be a good threshold. That is, it the retrieved friend username has more than 50 characters, it means that it is not an username, and therefore the user doesn't have one.
 
@@ -127,19 +127,19 @@ We now try to extract both usernames and ids using regular expressions and we sa
 
 
 
-```r
+{% highlight r%}
 ## retrieve ids and usernames
 friends_names = html_text(friends)
 friends_ids = sapply(friends, function(x) return(sub(".*id=([0-9]*).*", "\\1", x)))
 friends_usernames = sapply(friends, 
     function(x) return(sub(".*facebook\\.com/([A-Za-z0-9\\.]*)\\?fref.*", "\\1", x)))
 friends_usernames[nchar(friends_usernames)>50] = NA
-```
+{% endhighlight %}
 
 Now we define a function to help us retrieve mutual friends page. It will depend on wether the user does or doesn't have an username.
 
 
-```r
+{% highlight r%}
 fb_mutual_friends_page <- function(string, type = "username") {
 
   if (type == "username") {
@@ -153,13 +153,12 @@ fb_mutual_friends_page <- function(string, type = "username") {
     return(NULL)
   }
 }
-``` 
+{% endhighlight %}
 
 And create a data frame to organize the collected information about the friends:
 
 
-```r
-
+{% highlight r%}
 friends_df = data.frame(name = friends_names,
                         friends_usernames = friends_usernames,
                         friends_ids = friends_ids,
@@ -173,12 +172,12 @@ friends_df = data.frame(name = friends_names,
 friends_df$link = friends_df$link_id
 friends_df$link[!is.na(friends_usernames)] = friends_df$link_username[!is.na(friends_usernames)]
 friends_df$link_username[is.na(friends_df$friends_usernames)] = NA
-```
+{% endhighlight %}
 
 
 Finally, it's time to get the mutual friends list. We loop through all friends, going to their "link" column in the data frame to visit their own "Friends" page. Once we finish scrolling down, we add the mutual friends to a list and move to the next iteration.
 
-```r
+{% highlight r%}
 #loops though all friends and collect your mutual friends with them
 for (i in 1:n_friends) {
     cat("Scrapping friend ", i, "out of ", n_friends, "...\n")
@@ -212,14 +211,14 @@ for (i in 1:n_friends) {
     mutual_friends_ids = sapply(mutual_friends, function(x) return(sub(".*id=([0-9]*).*", "\\1", x)))
     mutual_friends_ids_all[[i]] <- mutual_friends_ids
 }
-```
+{% endhighlight %}
 
 
 ## Preparing data for visualization
 
 At this point we should have a list that looks like:
 
-```r
+{% highlight r%}
 > mutual_friends_ids_all %>% head(3)
 [[1]]
  [1] "xxxxx" "xxxxx" "xxxxx" 
@@ -231,7 +230,7 @@ At this point we should have a list that looks like:
 
 [[3]]
  [1] "xxxxx" "xxxxxx"
-```
+{% endhighlight %}
 
 
 It would be nice to have some clusterization of friends to encode as color for the visualization and to do that we will use the package `igraph` and a label propagation algorithm. *Disclaimer: I didn't study anything about the available methods to do this so please note that I am just applying a function that I found somewhere and there are probably better ways to do this.*
@@ -239,7 +238,7 @@ It would be nice to have some clusterization of friends to encode as color for t
 We need to transform a little the data to learn the clusters:
 
 
-```r
+{% highlight r%}
 N = nrow(friends_df)
 friends_matrix = matrix(0,N,N,dimnames = list(friends_df$friends_ids, friends_df$friends_ids))
 for (i in 1:N) {
@@ -258,29 +257,29 @@ ga.data <- do.call(rbind, lapply(1:N, function(i) {
 g <- graph.data.frame(ga.data, directed=FALSE)
 
 wc <- label.propagation.community(g)
-``` 
+{% endhighlight %}
 <p></p>
-```r
+{% highlight r%}
 > head(ga.data, 2)
   from            to
 1 xxxxxx          zzzzzzz
 2 xxxxxx          yyyyyyy
-```
+{% endhighlight %}
 <p></p>
-```r
+{% highlight r%}
 > wc
 IGRAPH clustering label propagation, groups: 10, mod: 0.61
 + groups:
   $`1`
    [1] "xxxxxx"           "yyyyyy"                  "zzzzzzz"             "wwwwww"                   
   + ... omitted several groups/vertices
- ```
+ {% endhighlight %}
 
 
 Great! With the links and clusters in hand, we just have to save the data in a way our d3.js script will read.
 
 
-```r
+{% highlight r%}
 links = ga.data
 names(links) = c("source", "target")
 nodes = data.frame(name = NULL, group = NULL)
@@ -297,30 +296,30 @@ names(nodes)[1] = "id"
 #in case there's a mistake and someone appears in links but not nodes...
 links = links[links$source %in% nodes$id,]
 links = links[links$target %in% nodes$id,]
-```
+{% endhighlight %}
 <p></p>
-```r
+{% highlight r%}
 > head(links,2)
   source         target
 1 xxxxx      zzzzzz
 2 xxxxx      yyyyyy
-```
+{% endhighlight %}
 <p></p>
-```r
+{% highlight r%}
 > head(nodes,2)
   id group n_links
 1 xxxxx     1      22
 2 yyyyy     1      31
-```
+{% endhighlight %}
 
 
 And save to json
-```r
+{% highlight r%}
 json_nodes = rjson::toJSON(unname(split(nodes, 1:nrow(nodes))))
 json_links = rjson::toJSON(unname(split(links, 1:nrow(links))))
 write_file(paste0('{\n"nodes": ', json_nodes, ', \n', '"links": ', json_links, "\n}"),
            "data.json")
-```
+{% endhighlight %}
 
 
 ## D3.js visualization
@@ -331,7 +330,7 @@ I found my network to be very interesting. Some background about myself: I'm fro
 
 <!-- <iframe src="{{site.baseurl}}/assets/d3js/vis.html" width="100%" height="500" marginwidth="0" marginheight="0" scrolling="no" frameBorder="0"></iframe> -->
 
-```javascript
+{% highlight javascript%}
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
@@ -454,4 +453,4 @@ function dragended(d) {
 }
 
 </script>
-```
+{% endhighlight %}
