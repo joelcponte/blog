@@ -31,7 +31,8 @@ It sounds simple but Facebook has a lot of little details that we must take into
 We begin by starting RSelenium as usual and loging in Facebook. If you are not familiar with RSelenium I recommend [taking a look here](https://ropensci.org/tutorials/rselenium_tutorial/) and [here](http://rpubs.com/johndharrison/RSelenium-Docker).
 
 {% highlight r%}
-remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, browserName = "firefox")
+remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, 
+    browserName = "firefox")
 remDr$open()
 
 remDr$setTimeout(type = "page load", milliseconds = 99999999999)
