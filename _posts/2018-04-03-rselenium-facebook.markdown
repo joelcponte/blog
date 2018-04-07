@@ -31,8 +31,7 @@ It sounds simple but Facebook has a lot of little details that we must take into
 We begin by starting RSelenium as usual and loging in Facebook. If you are not familiar with RSelenium I recommend [taking a look here](https://ropensci.org/tutorials/rselenium_tutorial/) and [here](http://rpubs.com/johndharrison/RSelenium-Docker).
 
 {% highlight r%}
-remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, 
-    browserName = "firefox")
+remDr <- remoteDriver(remoteServerAddr = "XXXXX", port = 4445L, browserName = "firefox")
 remDr$open()
 
 remDr$setTimeout(type = "page load", milliseconds = 99999999999)
@@ -106,13 +105,7 @@ We don't know which friends have usernames or not. For friends who have username
 
 {% highlight r%}
 friends[532] %>% as.character()
-[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\" \
-/ajax/hovercard/user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\" \
-  data-gt='{\"engagement\":{\"eng_type\":\"1\",\"eng_src\":\"2\",\"eng_tid\":\"1437964297\" \
-  ,\"eng_data\":[]},\"coeff2_registry_key\":\"0406\",\"coeff2_info\":\" \
-  AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\" \
-  ,\"coeff2_action\":\"1\",\" coeff2_pv_signature\":\"2045669656\"}' href=\" \
-  https://www.facebook.com/USERNAME_HERE?fref=pb&amp; hc_location=friends_tab\">User Name</a>"
+[1] "<a data-hovercard-prefer-more-content-show=\"1\" data-hovercard=\"/ajax/hovercard/user.php?id=ID_HERE&amp; extragetparams=%7B%22hc_location%22%3A%22friends_tab%22%7D\"data-gt='{\"engagement\":{\"eng_type\":\"1\",\"eng_src\":\"2\",\"eng_tid\":\"1437964297\",\"eng_data\":[]},\"coeff2_registry_key\":\"0406\",\"coeff2_info\":\" \AasBsWStelnLVpVZEdT6HQTiPfwTiAYdkcrKSeqdhMm4ZZPrVgYGvuD20JFAuSLmOiYKgtyMMmiyOHkVxeGLURYV\",\"coeff2_action\":\"1\",\" coeff2_pv_signature\":\"2045669656\"}' href=\"https://www.facebook.com/USERNAME_HERE?fref=pb&amp; hc_location=friends_tab\">User Name</a>"
 {% endhighlight %}
 
 For friends who don't have usernames, we have something like:
