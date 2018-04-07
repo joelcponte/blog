@@ -269,7 +269,7 @@ wc <- label.propagation.community(g)
 IGRAPH clustering label propagation, groups: 10, mod: 0.61
 + groups:
   $`1`
-   [1] "xxxxxx"           "yyyyyy"                  "zzzzzzz"             "wwwwww"                   
+   [1] "xxxxxx"         "yyyyyy"      "zzzzzzz"       "wwwwww"                   
   + ... omitted several groups/vertices
  {% endhighlight %}
 
